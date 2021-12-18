@@ -3,16 +3,11 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../components/Login.vue'
 import Categoria from '../components/Categoria.vue'
-import Articulo from '../components/Articulo.vue'
-import Ingreso from '../components/Ingreso.vue'
-import Proveedor from '../components/Proveedor.vue'
+import Cowork from '../components/Cowork.vue'
 
-import Venta from '../components/Venta.vue'
-import Cliente from '../components/Cliente.vue'
-import Rol from '../components/Rol.vue'
+import Reserva from '../components/Reserva.vue'
+import TipoUsuario from '../components/TipoUsuario.vue'
 import Usuario from '../components/Usuario.vue'
-import ConsultaCompra from '../components/ConsultaCompra.vue'
-import ConsultaVenta from '../components/ConsultaVenta.vue'
 
 import store from '../store/'
 
@@ -25,8 +20,7 @@ const routes = [
     component: Home,
     meta: {
       administrador: true,
-      almacenero: true,
-      vendedor: true
+      cliente: true
     }
   },
   {
@@ -42,7 +36,8 @@ const routes = [
     name: 'cowork',
     component: Cowork,
     meta: {
-      administrador: true
+      administrador: true,
+      cliente: true
     }
   },
   {
@@ -57,7 +52,7 @@ const routes = [
   {
     path: '/roles',
     name: 'roles',
-    component: Rol,
+    component: TipoUsuario,
     meta: {
       administrador: true
     }
@@ -89,11 +84,11 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.libre)){
     next()
-  }else if (store.state.usuario && store.state.usuario.rol == 'Administrador'){
+  }else if (store.state.usuario && store.state.usuario.tipousuario == 'Administrador'){
     if(to.matched.some(record => record.meta.administrador)){
       next()
     }
-  }else if (store.state.usuario && store.state.usuario.rol == 'Cliente'){
+  }else if (store.state.usuario && store.state.usuario.tipousuario == 'Cliente'){
     if(to.matched.some(record => record.meta.cliente)){
       next()
     }
@@ -101,6 +96,7 @@ router.beforeEach((to, from, next) => {
     next({
       name: 'login'
     })
+    
   }
 })
 
