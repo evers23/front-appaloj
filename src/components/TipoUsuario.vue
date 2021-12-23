@@ -229,7 +229,7 @@ export default {
             let header = {"Authorization": "Bearer " + this.$store.state.token};
             let configuracion = {headers: header};
 
-            axios.get('api/roles/listar', configuracion).then(function(response) {
+            axios.get('api/tipousuarios/listar', configuracion).then(function(response) {
                 me.roles = response.data;
                 console.log(me.roles);
             }).catch(function(error) {
@@ -237,7 +237,7 @@ export default {
             });
         },
         editItem (item) {
-            this.id = item.idrol;
+            this.id = item.idtipousuario;
             this.nombre = item.nombre;
             this.descripcion = item.descripcion;
             this.editedIndex = 1;
@@ -265,8 +265,8 @@ export default {
 
             if (this.editedIndex > -1) {
                 let me = this;
-                axios.put('api/roles/editar', {
-                    'idrol': me.id,
+                axios.put('api/tipousuarios/editar', {
+                    'idtipousuario': me.id,
                     'nombre': me.nombre,
                     'descripcion': me.descripcion
                 }, configuracion).then(function(response) {
@@ -278,7 +278,7 @@ export default {
                 });
             } else {
                 let me = this;
-                axios.post('api/roles/crear', {
+                axios.post('api/tipousuarios/crear', {
                     'nombre': me.nombre,
                     'descripcion': me.descripcion
                 }, configuracion).then(function(response) {
@@ -304,7 +304,7 @@ export default {
         activarDesactivar(accion, item) {
             this.adModal = 1;
             this.adNombre = item.nombre;
-            this.adId = item.idrol;
+            this.adId = item.idtipousuario;
             if (accion == 1){
                 this.adAccion = 1;
             } else if (accion == 2){
@@ -324,7 +324,7 @@ export default {
             let header = {"Authorization": "Bearer " + this.$store.state.token};
             let configuracion = {headers: header};
 
-            axios.put('api/roles/Activar/'+this.adId, {}, configuracion).then(function(response) {
+            axios.put('api/tipousuarios/Activar/'+this.adId, {}, configuracion).then(function(response) {
                 me.adModal = 0;
                 me.adAccion = 0;
                 me.adNombre = "";
@@ -340,7 +340,7 @@ export default {
             let header = {"Authorization": "Bearer " + this.$store.state.token};
             let configuracion = {headers: header};
 
-            axios.put('api/roles/Desactivar/'+this.adId, {}, configuracion).then(function(response) {
+            axios.put('api/tipousuarios/Desactivar/'+this.adId, {}, configuracion).then(function(response) {
                 me.adModal = 0;
                 me.adAccion = 0;
                 me.adNombre = "";

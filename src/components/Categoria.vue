@@ -9,27 +9,19 @@
             class="elevation-1"
             >
             <template v-slot:top>
-                <v-toolbar
-                flat
-                >
+                <v-toolbar flat>
                 <v-toolbar-title>Categorias</v-toolbar-title>
-                <v-divider
-                    class="mx-4"
-                    inset
-                    vertical
-                ></v-divider>
+                
+                <v-divider class="mx-4" inset vertical></v-divider>
                 <v-spacer></v-spacer>
+
                 <v-text-field class="text-xs-center" v-model="search" append-icon="mdi-magnify" label="Búsqueda" single-line hide-details></v-text-field>
+                
                 <v-spacer></v-spacer>
+                
                 <v-dialog v-model="dialog" max-width="500px">
                     <template v-slot:activator="{ on }">
-                    <v-btn
-                        slot="activator"
-                        color="primary"
-                        dark
-                        class="mb-2"
-                        v-on="on"
-                    >
+                    <v-btn slot="activator" color="primary" dark class="mb-2" v-on="on">
                         Nuevo
                     </v-btn>
                     </template>
@@ -40,57 +32,29 @@
         
                     <v-card-text>
                         <v-container>
-                        <v-row>
-                            <v-col
-                            cols="12"
-                            sm="12"
-                            md="12"
-                            >
-                            <v-text-field
-                                v-model="nombre"
-                                label="Nombre"
-                            ></v-text-field>
-                            </v-col>
-                            <v-col
-                            cols="12"
-                            sm="12"
-                            md="12"
-                            >
-                            <v-text-field
-                                v-model="descripcion"
-                                label="Descripción"
-                            ></v-text-field>
-                            </v-col>
+                            <v-row>
+                                <v-col cols="12" sm="12" md="12">
+                                    <v-text-field v-model="nombre" label="Nombre"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="12" md="12">
+                                    <v-text-field v-model="descripcion" label="Descripción"></v-text-field>
+                                </v-col>
 
-                            <v-col
-                            cols="12"
-                            sm="12"
-                            md="12"
-                            v-show='valida'
-                            >
-                                <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
-
-                                </div>
-                            </v-col>
-                        </v-row>
+                                <v-col cols="12" sm="12" md="12" v-show='valida'>
+                                    <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
+                                    </div>
+                                </v-col>
+                            </v-row>
                         </v-container>
                     </v-card-text>
         
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="close"
-                        >
-                        Cancelar
+                        <v-btn color="blue darken-1" text @click="close">
+                            Cancelar
                         </v-btn>
-                        <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="guardar"
-                        >
-                        Guardar
+                        <v-btn color="blue darken-1" text @click="guardar">
+                            Guardar
                         </v-btn>
                     </v-card-actions>
                     </v-card>
@@ -122,28 +86,60 @@
                 </v-toolbar>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-                <v-icon
-                small
-                class="mr-2"
-                @click="editItem(item)"
-                >
-                mdi-pencil
-                </v-icon>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon
+                        color="grey darken-3"
+                        small
+                        dark
+                        class="mr-2"
+                        v-bind="attrs"
+                        v-on="on"
+                        @click="editItem(item)"
+                        >
+                        mdi-pencil
+                        </v-icon>
+                    </template>
+                    <span>Editar</span>
+                </v-tooltip>
+                
                 <template v-if="item.condicion">
-                    <v-icon
-                    small
-                    @click="activarDesactivar(2, item)"
-                    >
-                    mdi-cancel
-                    </v-icon>
+                    
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            color="grey darken-3"
+                            small
+                            dark
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="activarDesactivar(2, item)"
+                            >
+                            mdi-cancel
+                            </v-icon>
+                        </template>
+                        <span>Desactivar</span>
+                    </v-tooltip>
+
                 </template>
                 <template v-else>
-                    <v-icon
-                    small
-                    @click="activarDesactivar(1, item)"
-                    >
-                    mdi-check-decagram
-                    </v-icon>
+
+                    <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-icon
+                            color="grey darken-3"
+                            small
+                            dark
+                            v-bind="attrs"
+                            v-on="on"
+                            @click="activarDesactivar(1, item)"
+                            >
+                            mdi-check-decagram
+                            </v-icon>
+                        </template>
+                        <span>Activar</span>
+                    </v-tooltip>
+
                 </template>
             </template>
             <template v-slot:[`item.condicion`]="{ item }">
@@ -206,7 +202,7 @@ export default {
     },
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'Nueva Articulo' : 'Editar Articulo'
+            return this.editedIndex === -1 ? 'Nueva Categoria' : 'Editar Categoria'
         },
     },
 

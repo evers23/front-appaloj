@@ -23,7 +23,7 @@
         <template v-if="esAdmin">
             <v-list-item :to="{ name: 'categorias'}">
               <v-list-item-action>
-                <v-icon>mdi-table</v-icon>
+                <v-icon>mdi-view-list</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -35,7 +35,7 @@
         <template v-if="esAdmin">
             <v-list-item :to="{ name: 'cowork'}">
               <v-list-item-action>
-                <v-icon>mdi-table</v-icon>
+                <v-icon>mdi-briefcase</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -47,7 +47,7 @@
         <template v-if="esAdmin || esCliente">
             <v-list-item :to="{ name: 'reserva'}">
               <v-list-item-action>
-                <v-icon>mdi-table</v-icon>
+                <v-icon>mdi-calendar-range</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -67,7 +67,7 @@
             </v-list-item>
             <v-list-item :to="{ name: 'roles'}">
               <v-list-item-action>
-                <v-icon>mdi-table</v-icon>
+                <v-icon>mdi-cogs</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
@@ -98,7 +98,7 @@
     >
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <span class="hidden-sm-and-down">Sistema</span>
+        <span class="hidden-sm-and-down">AppCowork</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn @click="salir" v-if="logueado" icon>
@@ -125,7 +125,7 @@
           class="primary lighten-2 py-4 text-center white--text"
           cols="12"
         >
-          {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+          {{ new Date().getFullYear() }} — <strong>Martin Salinas</strong>
         </v-col>
       </v-row>
     </v-footer>
@@ -147,10 +147,10 @@ export default {
       return this.$store.state.usuario;
     },
     esAdmin() {
-      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Administrador';
+      return this.$store.state.usuario && this.$store.state.usuario.tipousuario == 'Administrador';
     },
     esCliente() {
-      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Cliente';
+      return this.$store.state.usuario && this.$store.state.usuario.tipousuario == 'Cliente';
     }
   }, 
   created() {

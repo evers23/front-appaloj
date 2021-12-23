@@ -1,106 +1,34 @@
+
 <template>
-    <v-layout align-start>
-        <v-flex>
-            <v-data-table
-            :headers="headers"
-            :items="clientes"
-            :search="search"
-            sort-by="nombre"
-            class="elevation-1"
+  <div class="row">
+      <div class="col-sm" v-for="cow in coworks" :key="cow.idcowork">
+        <div class="text-center card-box">
+          <div class="member-card pt-2 pb-2">
+            <div class="thumb-lg member-thumb mx-auto">
+              <img
+                src='https://source.unsplash.com/user/c_v_r/200x200'
+                class="rounded-circle img-thumbnail"
+                alt="profile-image"
+              />
+            </div>
+
+            <div class="">
+              <h4>{{ cow.nombre }} {{ cow.direccion }}</h4>
+              <p class="text-muted">
+                {{cow.direccion}}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light"
             >
-            <template v-slot:top>
-                <v-toolbar
-                flat
-                >
-                <v-toolbar-title>Clientes</v-toolbar-title>
-                <v-divider
-                    class="mx-4"
-                    inset
-                    vertical
-                ></v-divider>
-                <v-spacer></v-spacer>
-                <v-text-field class="text-xs-center" v-model="search" append-icon="mdi-magnify" label="Búsqueda" single-line hide-details></v-text-field>
-                <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="80%">
-                    <template v-slot:activator="{ on }">
-                    <v-btn
-                        slot="activator"
-                        color="primary"
-                        dark
-                        class="mb-2"
-                        v-on="on"
-                    >
-                        Nuevo
-                    </v-btn>
-                    </template>
-                    <v-card>
-                    <v-card-title>
-                        <span class="text-h5">{{ formTitle }}</span>
-                    </v-card-title>
-        
-                    <v-card-text>
-                        <v-container>
-                        <v-row>
-                            <v-col cols="6" sm="6" md="6">
-                                <v-text-field v-model="nombre" label="Nombre"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" sm="6" md="6">
-                                <v-select v-model="tipodocumento" :items="documentos" label="Documento"></v-select>
-                            </v-col>
-                            <v-col cols="6" sm="6" md="6">
-                                <v-text-field v-model="numdocumento" label="# Documento"></v-text-field>
-                            </v-col>
-                            <v-col cols="6" sm="6" md="6">
-                                <v-text-field v-model="telefono" label="Teléfono" ></v-text-field>
-                            </v-col>
-                            <v-col cols="6" sm="6" md="6">
-                                <v-text-field v-model="email" label="Email" ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="12">
-                                <v-text-field v-model="direccion" label="Dirección"></v-text-field>
-                            </v-col>
-                            
-                            <v-col cols="12" sm="12" md="12" v-show='valida'>
-                                <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
-                                </div>
-                            </v-col>
-                        </v-row>
-                        </v-container>
-                    </v-card-text>
-        
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="close">
-                            Cancelar
-                        </v-btn>
-                        <v-btn color="blue darken-1" text @click="guardar" >
-                            Guardar
-                        </v-btn>
-                    </v-card-actions>
-                    </v-card>
-                </v-dialog>
-                </v-toolbar>
-            </template>
-            <template v-slot:[`item.actions`]="{ item }">
-                <v-icon
-                small
-                class="mr-2"
-                @click="editItem(item)"
-                >
-                mdi-pencil
-                </v-icon>
-            </template>
-            <template v-slot:no-data>
-                <v-btn
-                color="primary"
-                @click="listar"
-                >
-                Resetear
-                </v-btn>
-            </template>
-            </v-data-table>
-        </v-flex>
-    </v-layout>
+              Reservar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -108,6 +36,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            coworks: [],
             clientes: [],
             dialog: false,
             headers: [
@@ -154,16 +83,30 @@ export default {
     },
 
     created () {
+        this.listarCowork();
         this.listar();
     },
     methods: {
+        listarCowork() {
+            let me = this;
+
+            let header = {"Authorization": "Bearer " + this.$store.state.token};
+            let configuracion = {headers: header};
+
+            axios.get('api/coworks/listar', configuracion).then(function(response) {
+                me.coworks = response.data;
+                console.log(me.coworks);
+            }).catch(function(error) {
+                console.log(error);
+            });
+        },
         listar() {
             let me = this;
 
             let header = {"Authorization": "Bearer " + this.$store.state.token};
             let configuracion = {headers: header};
 
-            axios.get('api/personas/listarcliente', configuracion).then(function(response) {
+            axios.get('api/reservas/listar', configuracion).then(function(response) {
                 //console.log(response);
                 me.clientes = response.data;
                 console.log(me.clientes);
@@ -209,7 +152,7 @@ export default {
             if (this.editedIndex > -1) {
                 let me = this;
 
-                axios.put('api/personas/editar', {
+                axios.put('api/reservas/editar', {
                     'idpersona': me.id,
                     'tipopersona': 'CLIENTE',
                     'nombre': me.nombre,
@@ -227,7 +170,7 @@ export default {
                 });
             } else {
                 let me = this;
-                axios.post('api/personas/crear', {
+                axios.post('api/reservas/crear', {
                     'tipopersona': 'CLIENTE',
                     'nombre': me.nombre,
                     'tipodocumento': me.tipodocumento,

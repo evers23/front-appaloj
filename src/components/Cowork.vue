@@ -3,7 +3,7 @@
         <v-flex>
             <v-data-table
             :headers="headers"
-            :items="articulos"
+            :items="coworks"
             :search="search"
             sort-by="nombre"
             class="elevation-1"
@@ -12,7 +12,7 @@
                 <v-toolbar
                 flat
                 >
-                <v-toolbar-title>Articulos</v-toolbar-title>
+                <v-toolbar-title>Coworks</v-toolbar-title>
                 <v-divider
                     class="mx-4"
                     inset
@@ -45,16 +45,16 @@
                                 <v-select v-model="idcategoria" :items="categorias" label="Categoria"></v-select>
                             </v-col>
                             <v-col cols="6" sm="6" md="6">
-                                <v-text-field v-model="codigo" label="Código"></v-text-field>
+                                <v-text-field v-model.number="precio" label="Precio"></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="12" md="12">
                                 <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                             </v-col>
                             <v-col cols="6" sm="6" md="6">
-                                <v-text-field v-model.number="precio_venta" label="Precio Venta"></v-text-field>
+                                <v-text-field v-model="dueno" label="Dueño"></v-text-field>
                             </v-col>
                             <v-col cols="6" sm="6" md="6">
-                                <v-text-field v-model.number="stock" label="Existencia"></v-text-field>
+                                <v-text-field v-model="direccion" label="Dirección"></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="12" md="12">
                                 <v-text-field v-model="descripcion" label="Descripción" ></v-text-field>
@@ -166,17 +166,16 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            articulos: [],
+            coworks: [],
             dialog: false,
             dialogDelete: false,
             headers: [
             { text: '', value: 'actions', sortable: false },
             { text: 'Categoria', value: 'categoria' },
-            { text: 'Código', value: 'codigo' },
+            { text: 'Dueño', value: 'dueno' },
             { text: 'Nombre', value: 'nombre' },
-            { text: 'Precio', value: 'precio_venta' },
-            { text: 'Existencia', value: 'stock' },
-            { text: 'Descripción', value: 'descripcion', sortable: false },
+            { text: 'Dirección', value: 'direccion' },
+            { text: 'Precio', value: 'precio' },
             { text: 'Estado', value: 'condicion', sortable: false },
             ],
             search: '',
@@ -184,11 +183,12 @@ export default {
             id: '',
             idcategoria: '',
             categorias: [],
-            codigo: '',
             nombre: '',
-            precio_venta: 0,
-            stock: 0,
+            dueno: '',
             descripcion: '',
+            direccion: '',
+            precio: 0,
+            foto: '',
             valida: 0,
             validaMensaje: [],
             adModal: 0,
@@ -199,7 +199,7 @@ export default {
     },
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'Nueva Articulo' : 'Editar Articulo'
+            return this.editedIndex === -1 ? 'Nuevo Cowork' : 'Editar Cowork'
         },
     },
 
@@ -223,10 +223,9 @@ export default {
             let header = {"Authorization": "Bearer " + this.$store.state.token};
             let configuracion = {headers: header};
 
-            axios.get('api/articulos/listar', configuracion).then(function(response) {
-                //console.log(response);
-                me.articulos = response.data;
-                console.log(me.articulos);
+            axios.get('api/coworks/listar', configuracion).then(function(response) {
+                me.coworks = response.data;
+                console.log(me.coworks);
             }).catch(function(error) {
                 console.log(error);
             });
@@ -249,13 +248,14 @@ export default {
             });
         },
         editItem (item) {
-            this.id = item.idarticulo;
-            this.idcategoria = item.idcategoria;
-            this.codigo = item.codigo;
+            this.id = item.idcowork;
             this.nombre = item.nombre;
-            this.precio_venta = item.precio_venta;
-            this.stock = item.stock;
+            this.dueno = item.dueno;
             this.descripcion = item.descripcion;
+            this.direccion = item.direccion;
+            this.idcategoria = item.idcategoria;
+            this.precio = item.precio;
+            this.foto = item.foto;
             this.editedIndex = 1;
             this.dialog = true
         },
@@ -267,12 +267,14 @@ export default {
 
         limpiar() {
             this.id = '';
-            this.idcategoria = '';
-            this.codigo = '';
+            this.id = '';
             this.nombre = '';
-            this.precio_venta = 0;
-            this.stock = 0;
+            this.dueno = '';
             this.descripcion = '';
+            this.direccion = '';
+            this.idcategoria = '';
+            this.precio = 0;
+            this.foto = '';
             this.editedIndex = -1;
         },
         guardar () {
@@ -284,14 +286,15 @@ export default {
 
             if (this.editedIndex > -1) {
                 let me = this;
-                axios.put('api/articulos/editar', {
-                    'idarticulo': me.id,
-                    'idcategoria': me.idcategoria,
-                    'codigo': me.codigo,
-                    'nombre': me.nombre,
-                    'precio_venta': me.precio_venta,
-                    'stock': me.stock,
-                    'descripcion': me.descripcion
+                axios.put('api/coworks/editar', {
+                    "idcowork": me.id,
+                    "nombre": me.nombre,
+                    "dueno": me.dueno,
+                    "descripcion": me.descripcion,
+                    "direccion": me.direccion,
+                    "idcategoria": me.idcategoria,
+                    "precio": me.precio,
+                    "foto": me.foto
                 }, configuracion).then(function(response) {
                     me.close();
                     me.listar();
@@ -301,13 +304,14 @@ export default {
                 });
             } else {
                 let me = this;
-                axios.post('api/articulos/crear', {
-                    'idcategoria': me.idcategoria,
-                    'codigo': me.codigo,
-                    'nombre': me.nombre,
-                    'precio_venta': me.precio_venta,
-                    'stock': me.stock,
-                    'descripcion': me.descripcion
+                axios.post('api/coworks/crear', {
+                    "nombre": me.nombre,
+                    "dueno": me.dueno,
+                    "descripcion": me.descripcion,
+                    "direccion": me.direccion,
+                    "idcategoria": me.idcategoria,
+                    "precio": me.precio,
+                    "foto": me.foto
                 }, configuracion).then(function(response) {
                     me.close();
                     me.listar();
@@ -323,13 +327,13 @@ export default {
             if (this.nombre.length < 3 || this.nombre.length > 50)
                 this.validaMensaje.push("Nombre debe tener entre 3 y 50 catacteres.");
 
+            if (this.dueno.length < 3 || this.dueno.length > 50)
+                this.validaMensaje.push("Nombre debe tener entre 3 y 50 catacteres.");
+
             if (!this.idcategoria)
                 this.validaMensaje.push("Seleccione una categoria");
 
-            if (!this.stock || this.stock == 0)
-                this.validaMensaje.push("Ingrese stock inicial del articulo");
-
-            if (!this.precio_venta || this.precio_venta == 0)
+            if (!this.precio || this.precio == 0)
                 this.validaMensaje.push("Ingrese precio de venta del articulo");
 
             if (this.validaMensaje.length)
@@ -340,7 +344,7 @@ export default {
         activarDesactivar(accion, item) {
             this.adModal = 1;
             this.adNombre = item.nombre;
-            this.adId = item.idarticulo;
+            this.adId = item.idcowork;
             if (accion == 1){
                 this.adAccion = 1;
             } else if (accion == 2){
@@ -358,7 +362,7 @@ export default {
             let header = {"Authorization": "Bearer " + this.$store.state.token};
             let configuracion = {headers: header};
 
-            axios.put('api/articulos/Activar/'+this.adId, {}, configuracion).then(function(response) {
+            axios.put('api/coworks/Activar/'+this.adId, {}, configuracion).then(function(response) {
                 me.adModal = 0;
                 me.adAccion = 0;
                 me.adNombre = "";
@@ -370,7 +374,10 @@ export default {
         },
         desactivar() {
             let me = this;
-            axios.put('api/articulos/Desactivar/'+this.adId, {}, configuracion).then(function(response) {
+            let header = {"Authorization": "Bearer " + this.$store.state.token};
+            let configuracion = {headers: header};
+            
+            axios.put('api/coworks/Desactivar/'+this.adId, {}, configuracion).then(function(response) {
                 me.adModal = 0;
                 me.adAccion = 0;
                 me.adNombre = "";
